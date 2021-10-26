@@ -2,18 +2,18 @@ package com.myexample.photogallery
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.myexample.photogallery.api.FlickApi
+import com.myexample.photogallery.api.InstanceOfFlickrApi
 
-class PhotoGalleryViewModel: ViewModel() {
-    val galleryLiveData: LiveData<List<GallaryItem>>
-    val flickrFetchrRepo: FlickrFetchrRepo
+class PhotoGalleryViewModel : ViewModel() {
 
-    init {
-        flickrFetchrRepo = FlickrFetchrRepo()
-        galleryLiveData = flickrFetchrRepo.fetchContents()
-    }
+    private val flickrFetchrRepo = FlickrFetchrRepo(
+        InstanceOfFlickrApi()
+            .buildFlickrApi()
+    ) // Создание обьекта репо
+    val galleryLiveData: LiveData<List<GallaryItem>> = flickrFetchrRepo.fetchContents()  //асинхронный запрос на скачивания GSON
+
     override fun onCleared() {
         super.onCleared()
-        flickrFetchrRepo.flickRequest.cancel()
+        flickrFetchrRepo.cancelRequest()
     }
 }
